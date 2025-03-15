@@ -14,11 +14,11 @@ public interface ReservaRepositorio extends JpaRepository<Reserva, Long> {
 
     //Query Methods
 
-    List<Reserva> encontrarPasajero(Pasajero pasajero);
+    List<Reserva> findByPasajero(Pasajero pasajero);
     List<Reserva> findByVuelo(Vuelo vuelo);
     Optional<Reserva> findByCodigoReserva(UUID codigoReserva);
-    long contarVuelos(Vuelo vuelo);
-    void borrarPasajero(Pasajero pasajero);
+    long countByVuelo(Vuelo vuelo);
+    void deleteByPasajero(Pasajero pasajero);
 
     //Query
 

@@ -7,15 +7,15 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.Optional;
 
-public interface PasaporteRepositorio extends JpaRepository<Pasajero, Long> {
+public interface PasaporteRepositorio extends JpaRepository<Pasaporte, Long> {
 
     //Query Methods
 
-    Optional<Pasaporte> encontrarPasaportePorNumero(String numero);
-    boolean existePasaporte(String numero);
-    Optional<Pasaporte> encontrarPasajero(Pasajero pasajero);
+    Optional<Pasaporte> findByNumero(String numero);
+    boolean existsByNumero(String numero);
+    Optional<Pasaporte> findByPasajero(Pasajero pasajero);
     long count();
-    void eliminarPasaporte(String numero);
+    void deleteByNumero(String numero);
 
     //Query
 

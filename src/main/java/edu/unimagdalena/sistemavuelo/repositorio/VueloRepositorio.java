@@ -11,11 +11,11 @@ public interface VueloRepositorio extends JpaRepository<Vuelo, Long> {
 
     //Query methods
 
-    Optional<Vuelo> encontrarNumeroVuelo(UUID numeroVuelo);
-    List<Vuelo> enocntrarOrigen(String origen);
-    List<Vuelo> encontrarDestino(String destino);
-    List<Vuelo> encontrarOrigenYDestino(String origen, String destino);
-    boolean existeNumeroVuelo(UUID numeroVuelo);
+    Optional<Vuelo> findByNumeroVuelo(UUID numeroVuelo);
+    List<Vuelo> findByOrigen(String origen);
+    List<Vuelo> findByDestino(String destino);
+    List<Vuelo> findByOrigenAndDestino(String origen, String destino);
+    boolean existsByNumeroVuelo(UUID numeroVuelo);
 
     //Query
 

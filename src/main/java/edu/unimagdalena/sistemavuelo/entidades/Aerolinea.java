@@ -28,4 +28,9 @@ public class Aerolinea {
             inverseJoinColumns = @JoinColumn(name = "id_vuelo",referencedColumnName = "id")
     )
     private Set<Vuelo> vuelos;
+
+    public Aerolinea(String nombre, Set<Vuelo> vuelos) {
+        this.nombre = nombre;
+        this.vuelos = vuelos;
+    }
 }
