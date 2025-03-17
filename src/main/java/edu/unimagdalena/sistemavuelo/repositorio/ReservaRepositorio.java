@@ -4,6 +4,7 @@ import edu.unimagdalena.sistemavuelo.entidades.Pasajero;
 import edu.unimagdalena.sistemavuelo.entidades.Reserva;
 import edu.unimagdalena.sistemavuelo.entidades.Vuelo;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -14,11 +15,11 @@ public interface ReservaRepositorio extends JpaRepository<Reserva, Long> {
 
     //Query Methods
 
-    List<Reserva> encontrarPasajero(Pasajero pasajero);
+    List<Reserva> findByPasajero(Pasajero pasajero);
     List<Reserva> findByVuelo(Vuelo vuelo);
     Optional<Reserva> findByCodigoReserva(UUID codigoReserva);
-    long contarVuelos(Vuelo vuelo);
-    void borrarPasajero(Pasajero pasajero);
+    long countByVuelo(Vuelo vuelo);
+    void deleteByPasajero(Pasajero pasajero);
 
     //Query
 
@@ -38,8 +39,11 @@ public interface ReservaRepositorio extends JpaRepository<Reserva, Long> {
     ("SELECT COUNT(r) FROM Reserva r WHERE r.vuelo.id = ?1")
     long contarReservasPorVuelo(Long idVuelo);
 
-    @Query
-    ("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Reserva r WHERE r.pasajero.id = ?1")
-    boolean existeReservaPorPasajero(Long idPasajero);
+
+    @Modifying
+    @Query("UPDATE Reserva r SET r.vuelo.id = ?2 WHERE r.id = ?1")
+    void actualizarVuelo(Long idReserva, Long idVuelo);
+
+
 
 }

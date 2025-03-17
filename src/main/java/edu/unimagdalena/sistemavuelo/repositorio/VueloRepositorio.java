@@ -3,41 +3,44 @@ package edu.unimagdalena.sistemavuelo.repositorio;
 import edu.unimagdalena.sistemavuelo.entidades.Vuelo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+@Repository
 public interface VueloRepositorio extends JpaRepository<Vuelo, Long> {
 
     //Query methods
 
-    Optional<Vuelo> encontrarNumeroVuelo(UUID numeroVuelo);
-    List<Vuelo> enocntrarOrigen(String origen);
-    List<Vuelo> encontrarDestino(String destino);
-    List<Vuelo> encontrarOrigenYDestino(String origen, String destino);
-    boolean existeNumeroVuelo(UUID numeroVuelo);
+    Optional<Vuelo> findByNumeroVuelo(UUID numeroVuelo);
+    List<Vuelo> findByOrigenIgnoreCase(String origen);
+    List<Vuelo> findByDestinoIgnoreCase(String destino);
+    List<Vuelo> findByOrigenAndDestinoIgnoreCase(String origen, String destino);
+    boolean existsByNumeroVuelo(UUID numeroVuelo);
 
     //Query
 
     @Query
-    ("select v from Vuelo v where v.numeroVuelo = ?1")
-    Optional<Vuelo> buscarPorNumeroVuelo(UUID numeroVuelo);
+    ("SELECT v FROM Vuelo v JOIN v.reservas r WHERE r.codigoReserva = ?1")
+    Optional<Vuelo> buscarVueloPorCodigoReserva(UUID codigoReserva);
+
+    @Query
+      ("SELECT COUNT(r) FROM Vuelo v JOIN v.reservas r WHERE v.id = ?1")
+    long contarPasajerosPorVuelo(Long idVuelo);
     
     @Query
-    ("select v from Vuelo v where v.origen = ?1")
-    List<Vuelo> buscarPorOrigen(String origen);
+       ("SELECT v FROM Vuelo v JOIN v.reservas r WHERE r.pasajero.id = ?1")
+    List<Vuelo> buscarVuelosPorPasajero(Long idPasajero);
+
+    @Query
+       ("SELECT v FROM Vuelo v JOIN v.aerolineas a WHERE a.nombre = ?1")
+    List<Vuelo> buscarVuelosPorAerolinea(String nombreAerolinea);
     
     @Query
-    ("select v from Vuelo v where v.destino = ?1")
-    List<Vuelo> buscarPorDestino(String destino);
-    
-    @Query
-    ("select v from Vuelo v where v.origen = ?1 AND v.destino = ?2")
-    List<Vuelo> buscarPorOrigenYDestino(String origen, String destino);
-    
-    @Query
-    ("select count(v) from Vuelo v where v.origen = ?1")
-    long contarVuelosPorOrigen(String origen);
+       ("SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM Vuelo v JOIN v.reservas r WHERE v.id = ?1")
+    boolean vueloTieneReservas(Long idVuelo);
 
 
 }

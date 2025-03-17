@@ -36,4 +36,5 @@ public class Vuelo {
 
     @ManyToMany(mappedBy = "vuelos")
     private List<Aerolinea> aerolineas=new ArrayList<>();
+
 }
