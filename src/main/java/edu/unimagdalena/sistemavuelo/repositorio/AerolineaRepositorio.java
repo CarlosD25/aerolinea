@@ -16,7 +16,7 @@ public interface AerolineaRepositorio extends JpaRepository<Aerolinea, Long> {
 
     List<Aerolinea> findByVuelosIn(Set<Vuelo> vuelos);
     Optional<Aerolinea> findByNombre(String nombre);
-    List<Aerolinea> findByVuelosId(Long idVuelo);
+    Optional<Aerolinea> findAerolineaByVuelosId(Long idVuelo);
     long countByVuelosId(Long idVuelo);
     List<Aerolinea> findByNombreContainingIgnoreCase(String nombre);
 
@@ -42,4 +42,5 @@ public interface AerolineaRepositorio extends JpaRepository<Aerolinea, Long> {
     ("select a from Aerolinea a where size(a.vuelos) = 0")
     List<Aerolinea> obtenerAerolineasSinVuelos();
 
+    Long getAerolineaById(Long id);
 }
