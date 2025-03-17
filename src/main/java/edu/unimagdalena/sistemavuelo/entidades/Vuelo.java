@@ -18,6 +18,7 @@ import java.util.UUID;
 @Entity
 public class Vuelo {
 
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

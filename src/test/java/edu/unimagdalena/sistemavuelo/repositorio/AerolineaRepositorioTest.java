@@ -25,18 +25,21 @@ import static org.junit.jupiter.api.Assertions.*;
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class AerolineaRepositorioTest {
 
-    private Vuelo vuelo = new Vuelo();
-    private Vuelo vuelo1 = new Vuelo();
-    private Set<Vuelo> vuelos= new HashSet<>();
 
+    private Set<Vuelo> vuelos= new HashSet<>();
     @Autowired
     private AerolineaRepositorio aerolineaRepositorio;
     @Autowired
     private VueloRepositorio vueloRepositorio;
 
+    private Long idG;
+    private Long idA;
+
     @BeforeEach
     void setUp() {
 
+         Vuelo vuelo = new Vuelo();
+         Vuelo vuelo1 = new Vuelo();
 
 
         vuelo.setNumeroVuelo(UUID.randomUUID());
@@ -48,6 +51,13 @@ class AerolineaRepositorioTest {
         vuelo1.setOrigen("santa marta");
         vuelo1.setDestino("valledupar");
 
+        vueloRepositorio.save(vuelo);
+        idG=vuelo.getId();
+        vueloRepositorio.save(vuelo1);
+
+        vuelos.add(vuelo);
+        vuelos.add(vuelo1);
+
         for (int i = 0; i < 12; i++) {
             Vuelo nuevoVuelo = new Vuelo();
             nuevoVuelo.setNumeroVuelo(UUID.randomUUID());
@@ -57,13 +67,12 @@ class AerolineaRepositorioTest {
             vuelos.add(nuevoVuelo);
         }
 
-        vueloRepositorio.save(vuelo);
-        vueloRepositorio.save(vuelo1);
-        vuelos.add(vuelo);
-        vuelos.add(vuelo1);
+
+
         //aerolineaRepositorio.save(new Aerolinea("aerolinea con muchos vuelos", vuelos));
 
         aerolineaRepositorio.save(new Aerolinea("aerolinea", vuelos));
+        idA=aerolineaRepositorio.findByNombre("aerolinea").get().getId();
 
     }
 
@@ -72,7 +81,6 @@ class AerolineaRepositorioTest {
         aerolineaRepositorio.deleteAll();
         vueloRepositorio.deleteAll();
     }
-
 
     @Test
     void findByVuelosIn() {
@@ -88,17 +96,16 @@ class AerolineaRepositorioTest {
     @Test
 
     void findByNombre() {
-        Optional<Aerolinea> aerolinea = aerolineaRepositorio.findByNombreIgnoreCase("aerolinea");
+        Optional<Aerolinea> aerolinea = aerolineaRepositorio.findByNombre("aerolinea");
         assertTrue(aerolinea.isPresent());
         assertEquals("aerolinea", aerolinea.get().getNombre());
     }
 
     @Test
-    void findByVuelosId() {
-        List<Aerolinea> aerolineas = aerolineaRepositorio.findByVuelosId(1L);
-        assertFalse(aerolineas.isEmpty());
-        assertEquals(1, aerolineas.size());
-        assertEquals("aerolinea", aerolineas.get(0).getNombre());
+    void findAerolineaByVuelosId() {
+        Optional<Aerolinea> aerolinea = aerolineaRepositorio.findAerolineaByVuelosId(idG);
+        assertTrue(aerolinea.isPresent());
+
     }
 
     @Test
@@ -132,7 +139,7 @@ class AerolineaRepositorioTest {
 
     @Test
     void obtenerAerolineaPorId() {
-        Optional<Aerolinea> aerolinea= aerolineaRepositorio.obtenerAerolineaPorId(2L);
+        Optional<Aerolinea> aerolinea= aerolineaRepositorio.obtenerAerolineaPorId(idA);
         assertTrue(aerolinea.isPresent());
         assertEquals("aerolinea", aerolinea.get().getNombre());
 
@@ -140,9 +147,23 @@ class AerolineaRepositorioTest {
 
     @Test
     void contarVuelosPorId() {
+        Aerolinea aerolineaGuardada = aerolineaRepositorio.findAll().get(0);
+        long count = aerolineaRepositorio.contarVuelosPorId(aerolineaGuardada.getId());
+        assertEquals(14, count);
     }
 
     @Test
     void obtenerAerolineasSinVuelos() {
+        aerolineaRepositorio.save(new Aerolinea("aerolinea sin vuelos", new HashSet<>()));
+        List<Aerolinea> aerolineas = aerolineaRepositorio.obtenerAerolineasSinVuelos();
+        assertFalse(aerolineas.isEmpty());
+        boolean encontrado = false;
+        for (Aerolinea aerolinea : aerolineas ) {
+            if(aerolinea.getNombre().equalsIgnoreCase("aerolinea sin vuelos")) {
+                encontrado=true;
+                break;
+            }
+        }
+        assertTrue(encontrado);
     }
 }
