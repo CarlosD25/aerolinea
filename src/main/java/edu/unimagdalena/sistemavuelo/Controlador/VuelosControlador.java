@@ -28,7 +28,7 @@ public class VuelosControlador {
     }
 
 
-    @GetMapping("/{id]")
+    @GetMapping("/{id}")
     public ResponseEntity<Vuelo> obtenerVuelo(@PathVariable Long id) {
         Optional<Vuelo> vuelo = vueloServicio.obtenerVuelo(id);
         return vuelo.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());

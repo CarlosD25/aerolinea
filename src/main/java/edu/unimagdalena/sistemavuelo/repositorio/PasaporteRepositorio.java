@@ -3,8 +3,11 @@ package edu.unimagdalena.sistemavuelo.repositorio;
 import edu.unimagdalena.sistemavuelo.entidades.Pasajero;
 import edu.unimagdalena.sistemavuelo.entidades.Pasaporte;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface PasaporteRepositorio extends JpaRepository<Pasaporte, Long> {
@@ -15,7 +18,7 @@ public interface PasaporteRepositorio extends JpaRepository<Pasaporte, Long> {
     boolean existsByNumero(String numero);
     Optional<Pasaporte> findByPasajero(Pasajero pasajero);
     long count();
-    void deleteByNumero(String numero);
+
 
     //Query
 
@@ -27,17 +30,16 @@ public interface PasaporteRepositorio extends JpaRepository<Pasaporte, Long> {
     ("select count(p) > 0 from Pasaporte p where p.numero = ?1")
     boolean existePasaportePorNumero(String numero);
 
-    @Query
-    ("select p from Pasaporte p where p.pasajero.id = ?1")
-    Optional<Pasaporte> buscarPorIdPasajero(Long idPasajero);
+    @Query("select p from Pasaporte p where p.numero like ?1%")
+    List<Pasaporte> buscarPorPrefijoNumero(String prefijo);
 
-    @Query
-    ("select count(p) from Pasaporte p")
-    long contarPasaportes();
+    @Query("select count(p.id) from Pasaporte p where p.pasajero is not null")
+    long contarPasaportesActivos();
 
-    @Query
-    ("delete from Pasaporte p where p.numero = ?1")
-    void eliminarPorNumero(String numero);
+    @Modifying
+    @Transactional
+    @Query("update Pasajero pa set pa.pasaporte = null where pa.pasaporte.numero = ?1")
+    void desvincularPasaporteEnPasajero(String numero);
 
 
 }

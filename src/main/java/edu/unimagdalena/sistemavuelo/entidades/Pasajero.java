@@ -25,8 +25,8 @@ public class Pasajero {
     @Column(nullable = false)
     private String nid;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_pasaporte",referencedColumnName = "id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "id_pasaporte",referencedColumnName = "id", nullable = true)
     private Pasaporte pasaporte;
 
     @OneToMany(mappedBy = "pasajero")
