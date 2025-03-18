@@ -36,9 +36,13 @@ class PasajeroRepositorioTest {
     private Long idG;
     private Long idP;
     private Pasajero pasajero;
+    private Pasajero pasajero2;
     private Pasaporte pasaporte;
+    private Pasaporte pasaporte2;
     private Reserva reserva;
+    private Reserva reserva2;
     private Vuelo vuelo;
+    private Vuelo vuelo2;
 
     @BeforeEach
     void setUp() {
@@ -47,14 +51,27 @@ class PasajeroRepositorioTest {
         reserva=new Reserva();
         vuelo=new Vuelo();
 
+        pasajero2=new Pasajero();
+        pasaporte2=new Pasaporte();
+        reserva2=new Reserva();
+        vuelo2=new Vuelo();
+
         vuelo.setDestino("Valledupar");
         vuelo.setOrigen("Santa marta");
         vuelo.setNumeroVuelo(UUID.randomUUID());
+
+        vuelo2.setDestino("Cienaga");
+        vuelo2.setOrigen("san juan");
+        vuelo2.setNumeroVuelo(UUID.randomUUID());
         vueloRepositorio.save(vuelo);
+        vueloRepositorio.save(vuelo2);
 
         pasaporte.setNumero("018000");
         pasaporteRepositorio.save(pasaporte);
         idP=pasaporte.getId();
+
+        pasaporte2.setNumero("019000");
+        pasaporteRepositorio.save(pasaporte2);
 
         pasajero.setNombre("Carlos");
         pasajero.setNid("123");
@@ -62,6 +79,12 @@ class PasajeroRepositorioTest {
         pasajero.setReservas(new HashSet<>());
         pasajeroRepositorio.save(pasajero);
         idG=pasajero.getId();
+
+        pasajero2.setNombre("andres");
+        pasajero2.setNid("456");
+        pasajero2.setPasaporte(pasaporte2);
+        pasajero2.setReservas(new HashSet<>());
+        pasajeroRepositorio.save(pasajero2);
         
 
 
@@ -70,7 +93,14 @@ class PasajeroRepositorioTest {
         reserva.setVuelo(vuelo);
         reserva.setPasajero(pasajero);
         reservas.add(reserva);
+
+        reserva2.setCodigoReserva(UUID.randomUUID());
+        reserva2.setVuelo(vuelo2);
+        reserva2.setPasajero(pasajero);
+        reservas.add(reserva2);
         reservaRepositorio.save(reserva);
+        reservaRepositorio.save(reserva2);
+        pasajero.setReservas(reservas);
 
 
     }
@@ -154,9 +184,24 @@ class PasajeroRepositorioTest {
 
     @Test
     void buscarPasajerosConMultiplesReservas() {
+        List<Pasajero> pasajeroList= pasajeroRepositorio.buscarPasajerosConMultiplesReservas();
+        assertTrue(pasajeroList.size()>0);
+        boolean multiplesReservas=false;
+        for(Pasajero p:pasajeroList){
+            System.out.println(p.getReservas());
+            if(p.getReservas().size()>0){
+                multiplesReservas=true;
+                break;
+            }
+        }
+        assertTrue(multiplesReservas);
+        assertTrue(pasajeroList.size()==1);
     }
 
     @Test
     void contarPasajerosConReserva() {
+        Long pasajerosConReserva = pasajeroRepositorio.contarPasajerosConReserva();
+        assertTrue(pasajerosConReserva>0);
+
     }
 }

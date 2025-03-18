@@ -32,14 +32,14 @@ class VueloServicioTest {
 
         when(vueloRepositorio.save(any(Vuelo.class))).thenAnswer(invocation -> {
             Vuelo vueloGuardado = invocation.getArgument(0);
-            vueloGuardado.setId(1L); // Simula que JPA genera el ID
+            vueloGuardado.setId(1L);
             return vueloGuardado;
         });
 
         Vuelo crearVuelo = vueloServicio.createVuelo(vuelo);
 
-        assertNotNull(crearVuelo.getId()); // Ahora el ID no será null
-        assertEquals(vuelo.getNumeroVuelo(), crearVuelo.getNumeroVuelo()); // Corrige esta línea (antes comparabas con getId)
+        assertNotNull(crearVuelo.getId());
+        assertEquals(vuelo.getNumeroVuelo(), crearVuelo.getNumeroVuelo());
         assertEquals("Santa Marta", crearVuelo.getOrigen());
         assertEquals("Barranquilla", crearVuelo.getDestino());
         verify(vueloRepositorio, times(1)).save(vuelo);
